@@ -33,7 +33,7 @@ interface Post {
   comments: Comment[]
 }
 
-export default function PostPage() {
+function PostContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const { user, token } = useAuth()
@@ -388,4 +388,12 @@ export default function PostPage() {
       </div>
     </Suspense>
   )
+}
+
+export default function PostPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PostContent />
+    </Suspense>
+  );
 }
