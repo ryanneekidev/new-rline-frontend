@@ -36,7 +36,7 @@ interface Post {
 function PostContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const { user, token } = useAuth()
+  const auth = useAuth()
   const [post, setPost] = useState<Post | null>(null)
   const [loading, setLoading] = useState(true)
   const [commentContent, setCommentContent] = useState("")
@@ -78,7 +78,7 @@ function PostContent() {
   const handleCommentSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!token) {
+    if (!auth.token) {
       router.push("/login")
       return
     }
@@ -92,7 +92,7 @@ function PostContent() {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: `userId=${user?.id}&postId=${postId}&content=${encodeURIComponent(commentContent)}`,
+        body: `userId=${auth.user?.id}&postId=${postId}&content=${encodeURIComponent(commentContent)}`,
       })
 
       if (response.ok) {
@@ -106,72 +106,61 @@ function PostContent() {
     }
   }
 
-  const handleLikePost = async () => {
-    if (!token) {
-      router.push("/login")
-      return
-    }
+  const likePost = async (postId: string, userId: string) => {
+    return fetch("https://api.rline.ryanneeki.xyz/posts/like", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: `userId=${userId}&postId=${postId}`,
+    })
+  }
+
+  const dislikePost = async (postId: string, userId: string, likeId: string) => {
+    return fetch("https://api.rline.ryanneeki.xyz/posts/dislike", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: `userId=${userId}&postId=${postId}&likeId=${likeId}`,
+    })
+  }
+
+  const onToggleLike = async (postId: string, like: boolean) => {
+    // optimistic update of local post state
+    setPost((prev) => {
+      if (!prev) return prev
+      return {
+        ...prev,
+        likes: like ? (prev.likes ?? 0) + 1 : Math.max((prev.likes ?? 1) - 1, 0),
+        liked: like,
+      }
+    })
+
+    auth.togglePostLike(postId, like)
 
     try {
-      setLikingPost(true)
-      const response = await fetch("https://api.rline.ryanneeki.xyz/posts/like", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: `userId=${user?.id}&postId=${postId}`,
-      })
-
-      if (response.ok) {
-        const res = await response.json()
-        // Update user likes in auth context
-        if (user) {
-          user.like = res.updatedLikes
-        }
-        fetchPost() // Refresh post to show updated like count
+      if (like) await likePost(postId, auth.user!.id)
+      else {
+        const likeId = auth.user!.like?.find((l) => l.postId === postId)?.id
+        if (likeId) await dislikePost(postId, auth.user!.id, likeId)
       }
-    } catch (error) {
-      console.error("Error liking post:", error)
-    } finally {
-      setLikingPost(false)
+    } catch (err) {
+      // revert on error
+      setPost((prev) => {
+        if (!prev) return prev
+        return {
+          ...prev,
+          likes: like ? Math.max((prev.likes ?? 1) - 1, 0) : (prev.likes ?? 0) + 1,
+          liked: !like,
+        }
+      })
+      auth.togglePostLike(postId, !like)
+      console.error("Error toggling like:", err)
     }
   }
 
-  const handleDislikePost = async () => {
-    if (!token) {
-      router.push("/login")
-      return
-    }
-
-    const userLike = user?.like?.find((like) => like.postId === postId)
-    if (!userLike) return
-
-    try {
-      setLikingPost(true)
-      const response = await fetch("https://api.rline.ryanneeki.xyz/posts/dislike", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: `userId=${user?.id}&postId=${postId}&likeId=${userLike.id}`,
-      })
-
-      if (response.ok) {
-        const res = await response.json()
-        // Update user likes in auth context
-        if (user) {
-          user.like = res.updatedLikes
-        }
-        fetchPost() // Refresh post to show updated like count
-      }
-    } catch (error) {
-      console.error("Error disliking post:", error)
-    } finally {
-      setLikingPost(false)
-    }
-  }
-
-  const isLiked = Boolean(token && user?.like?.some((like) => like.postId === postId))
+  const isLiked = Boolean(auth.token && auth.user?.like?.some((like) => like.postId === postId))
 
   const formatTimeAgo = (dateString: string) => {
     const date = new Date(dateString)
@@ -271,7 +260,7 @@ function PostContent() {
               <div className="flex items-center gap-8">
                 <Button
                   variant="ghost"
-                  onClick={isLiked ? handleDislikePost : handleLikePost}
+                  onClick={() => onToggleLike(postId!, !isLiked)}
                   disabled={likingPost}
                   className={`flex items-center gap-2 transition-colors ${
                     isLiked ? "text-pink-600 hover:text-pink-700" : "text-gray-600 hover:text-pink-600"
@@ -300,14 +289,14 @@ function PostContent() {
               </span>
             </div>
 
-            {token ? (
+            {auth.token ? (
               <Card className="shadow-sm border-0 bg-white">
                 <CardContent className="p-6">
                   <form onSubmit={handleCommentSubmit} className="space-y-4">
                     <div className="flex items-start gap-4">
                       <Avatar className="w-10 h-10 ring-2 ring-pink-100">
                         <AvatarFallback className="bg-gradient-to-br from-pink-100 to-pink-200 text-pink-700 font-semibold">
-                          {user?.username?.[0]?.toUpperCase() || <User className="w-4 h-4" />}
+                          {auth.user?.username?.[0]?.toUpperCase() || <User className="w-4 h-4" />}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
@@ -395,5 +384,5 @@ export default function PostPage() {
     <Suspense fallback={<div>Loading...</div>}>
       <PostContent />
     </Suspense>
-  );
+  )
 }

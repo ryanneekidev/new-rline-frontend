@@ -29,33 +29,66 @@ export function PostsFeed() {
   }, [])
 
   const handleLikePost = async (postId: string) => {
-    if (auth.token !== "") {
-      try {
-        const response = await likePost(postId, auth.user!.id)
-        auth.user!.like = response.updatedLikes
-        await fetchPosts()
-      } catch (error) {
-        console.error("Error liking post:", error)
-      }
-    } else {
+    if (auth.token === "") {
       router.push("/login")
+      return
+    }
+
+    // optimistic update: mark the post liked locally
+    setPosts((prev) =>
+      prev.map((p) =>
+        p.id === postId ? { ...p, likes: (p.likes ?? 0) + 1, _optimisticLiked: true } : p
+      )
+    )
+
+    // update auth immutably via provider
+    auth.togglePostLike(postId, true)
+
+    try {
+      const response = await likePost(postId, auth.user!.id)
+      // use real response to update auth if it contains canonical likes
+      if (response?.updatedLikes) auth.setUser((u) => (u ? { ...u, like: response.updatedLikes } : u))
+      // replace optimistic flag
+      setPosts((prev) => prev.map((p) => (p.id === postId ? { ...p, _optimisticLiked: undefined } : p)))
+    } catch (error) {
+      // revert on error
+      auth.togglePostLike(postId, false)
+      setPosts((prev) =>
+        prev.map((p) =>
+          p.id === postId ? { ...p, likes: Math.max((p.likes ?? 1) - 1, 0), _optimisticLiked: undefined } : p
+        )
+      )
+      console.error("Error liking post:", error)
     }
   }
 
   const handleDislikePost = async (postId: string) => {
-    if (auth.token !== "") {
-      try {
-        const likeId = auth.user!.like.find((like) => like.postId === postId)?.id
-        if (likeId) {
-          const response = await dislikePost(postId, auth.user!.id, likeId)
-          auth.user!.like = response.updatedLikes
-          await fetchPosts()
-        }
-      } catch (error) {
-        console.error("Error disliking post:", error)
-      }
-    } else {
+    if (auth.token === "") {
       router.push("/login")
+      return
+    }
+
+    // optimistic local update
+    setPosts((prev) =>
+      prev.map((p) => (p.id === postId ? { ...p, likes: Math.max((p.likes ?? 1) - 1, 0), _optimisticLiked: false } : p))
+    )
+
+    auth.togglePostLike(postId, false)
+
+    try {
+      const likeId = auth.user!.like?.find((like) => like.postId === postId)?.id
+      if (likeId) {
+        const response = await dislikePost(postId, auth.user!.id, likeId)
+        if (response?.updatedLikes) auth.setUser((u) => (u ? { ...u, like: response.updatedLikes } : u))
+      }
+      setPosts((prev) => prev.map((p) => (p.id === postId ? { ...p, _optimisticLiked: undefined } : p)))
+    } catch (error) {
+      // revert
+      auth.togglePostLike(postId, true)
+      setPosts((prev) =>
+        prev.map((p) => (p.id === postId ? { ...p, likes: (p.likes ?? 0) + 1, _optimisticLiked: undefined } : p))
+      )
+      console.error("Error disliking post:", error)
     }
   }
 
@@ -70,7 +103,7 @@ export function PostsFeed() {
   return (
     <div className="space-y-6">
       {posts.map((post) => {
-        const isLiked = Boolean(auth.token && auth.user?.like.some((like) => like.postId === post.id))
+        const isLiked = Boolean(auth.token && auth.user?.like?.some((like) => like.postId === post.id))
 
         return (
           <PostCard

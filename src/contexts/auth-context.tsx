@@ -4,16 +4,18 @@ import { createContext, useContext, useState, useEffect, type ReactNode } from "
 import { useRouter } from "next/navigation"
 import { jwtDecode } from "jwt-decode"
 
-interface User {
+export type User = {
   id: string
-  username: string
-  email: string
-  like: Array<{ id: string; postId: string }>
+  username?: string
+  email?: string
+  like?: { id: string; postId: string }[]
 }
 
-interface AuthContextType {
+type AuthContextType = {
   user: User | null
   token: string
+  setUser: React.Dispatch<React.SetStateAction<User | null>>
+  togglePostLike: (postId: string, liked: boolean, likeRecord?: { id: string; postId: string } | null) => void
   loginError: string
   registerError: string
   login: (username: string, password: string) => Promise<void>
@@ -118,23 +120,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }
 
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        token,
-        loginError,
-        registerError,
-        login,
-        logout,
-        register,
-        clearAuthErrors,
-        isLoading,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  )
+  const togglePostLike = (postId: string, liked: boolean, likeRecord: { id: string; postId: string } | null = null) => {
+    setUser((prev) => {
+      if (!prev) return prev
+      const currentLikes = [...(prev.like ?? [])]
+      if (liked) {
+        // add a like record (avoid duplicates)
+        if (!currentLikes.some((l) => l.postId === postId)) {
+          currentLikes.push(likeRecord ?? { id: String(Date.now()), postId })
+        }
+      } else {
+        // remove
+        const filtered = currentLikes.filter((l) => l.postId !== postId)
+        return { ...prev, like: filtered }
+      }
+      return { ...prev, like: currentLikes }
+    })
+  }
+
+  const value: AuthContextType = { user, token, setUser, togglePostLike, loginError, registerError, login, logout, register, clearAuthErrors, isLoading }
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
 export const useAuth = () => {
