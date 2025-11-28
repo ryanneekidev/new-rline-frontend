@@ -1,4 +1,4 @@
-import { Navigation } from "@/components/ui/navigation"
+import Navigation  from "@/components/ui/navigation"
 import { PostsFeed } from "@/components/ui/posts-feed"
 
 export default function HomePage() {

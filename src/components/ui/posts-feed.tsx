@@ -7,7 +7,7 @@ import { getPosts, likePost, dislikePost, type Post } from "@/lib/api"
 import { useAuth } from "@/contexts/auth-context"
 import { formatTimeAgo } from "@/lib/utils"
 
-export function PostsFeed() {
+export function PostsFeed({ showHeader = true }: { showHeader?: boolean }) {
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
   const auth = useAuth()
@@ -16,7 +16,11 @@ export function PostsFeed() {
   const fetchPosts = async () => {
     try {
       const fetchedPosts = await getPosts()
-      setPosts(fetchedPosts)
+      // Sort posts by createdAt in descending order (newest first)
+      const sortedPosts = fetchedPosts.sort((a, b) => 
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )
+      setPosts(sortedPosts)
     } catch (error) {
       console.error("Error fetching posts:", error)
     } finally {
@@ -101,25 +105,40 @@ export function PostsFeed() {
   }
 
   return (
-    <div className="space-y-6">
-      {posts.map((post) => {
-        const isLiked = Boolean(auth.token && auth.user?.like?.some((like) => like.postId === post.id))
+    <section className="space-y-6">
+      {showHeader && (
+        <header className="flex items-center justify-between mb-2">
+          <h2 className="text-lg font-semibold text-gray-900">Latest</h2>
+          <p className="text-sm text-gray-500">A simple, soulful feed</p>
+        </header>
+      )}
 
-        return (
-          <PostCard
-            key={post.id}
-            id={post.id}
-            author={post.author.username}
-            content={post.content}
-            likes={post.likes}
-            comments={post.comments.length}
-            timeAgo={formatTimeAgo(post.createdAt)}
-            isLiked={isLiked}
-            onLike={() => (isLiked ? handleDislikePost(post.id) : handleLikePost(post.id))}
-            onComment={() => navigateToPost(post.id)}
-          />
-        )
-      })}
-    </div>
+      <div className="space-y-6">
+        {posts.length === 0 ? (
+          <div className="rounded-xl border border-dashed border-gray-200 bg-white p-8 text-center">
+            <p className="text-gray-600">No posts yet — be the first to share something.</p>
+          </div>
+        ) : (
+          posts.map((post) => {
+            const isLiked = Boolean(auth.token && auth.user?.like?.some((like) => like.postId === post.id))
+
+            return (
+              <PostCard
+                key={post.id}
+                id={post.id}
+                author={post.author?.username ?? "Unknown"}
+                content={post.content}
+                likes={post.likes}
+                comments={post.comments?.length ?? 0}
+                timeAgo={formatTimeAgo(post.createdAt)}
+                isLiked={isLiked}
+                onLike={() => (isLiked ? handleDislikePost(post.id) : handleLikePost(post.id))}
+                onComment={() => navigateToPost(post.id)}
+              />
+            )
+          })
+        )}
+      </div>
+    </section>
   )
 }

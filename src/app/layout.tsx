@@ -26,16 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <style>{`
-html {
-  font-family: ${geistSans.style.fontFamily};
-  --font-sans: ${geistMono.variable};
-  --font-mono: ${geistMono.variable};
-}
-        `}</style>
-      </head>
-      <body className="font-sans antialiased">
+      <body className="antialiased">
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

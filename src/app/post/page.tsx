@@ -8,7 +8,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Heart, MessageCircle, ArrowLeft, User } from "lucide-react"
+import { Heart, MessageCircle, ArrowLeft } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import Navigation from "@/components/ui/navigation"
 
@@ -222,7 +222,7 @@ function PostContent() {
   }
 
   return (
-    <Suspense>
+    <Suspense fallback={<div>Loading...</div>}>
       <div className="min-h-screen bg-gray-50">
         <Navigation />
 
@@ -239,41 +239,41 @@ function PostContent() {
           </div>
 
           <Card className="mb-8 shadow-sm border-0 bg-white">
-            <CardContent className="p-8">
-              <div className="flex items-start gap-4 mb-6">
+            <CardContent className="p-5">
+              <div className="flex items-start gap-4 mb-5">
                 <Avatar className="w-12 h-12 ring-2 ring-pink-100">
-                  <AvatarFallback className="bg-gradient-to-br from-pink-100 to-pink-200 text-pink-700 font-semibold">
-                    {post.author?.username?.[0]?.toUpperCase() || <User className="w-5 h-5" />}
+                  <AvatarFallback className="avatar-fallback">
+                    {post.author?.username?.[0]?.toUpperCase() || "U"}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 mb-2">
-                    <span className="font-semibold text-gray-900 text-lg">{post.author?.username || "Unknown User"}</span>
-                    <span className="text-gray-500 text-sm font-medium">{formatTimeAgo(post.createdAt)}</span>
+                    <span className="font-semibold text-gray-900">{post.author?.username || "Unknown User"}</span>
+                    <span className="text-gray-500 text-xs">{formatTimeAgo(post.createdAt)}</span>
                   </div>
-                  <h1 className="text-2xl font-bold text-gray-900 mb-4 leading-tight">{post.title}</h1>
-                  <p className="text-gray-700 leading-relaxed text-lg">{post.content}</p>
+                  <h1 className="text-xl font-bold text-gray-900 mb-3 leading-tight">{post.title}</h1>
+                  <p className="text-gray-700 leading-relaxed text-sm">{post.content}</p>
                 </div>
               </div>
             </CardContent>
-            <CardFooter className="px-8 py-6 border-t bg-gray-50/50">
-              <div className="flex items-center gap-8">
+            <CardFooter className="px-5 py-4 border-t bg-gray-50/50">
+              <div className="flex items-center gap-6">
                 <Button
                   variant="ghost"
                   onClick={() => onToggleLike(postId!, !isLiked)}
                   disabled={likingPost}
-                  className={`flex items-center gap-2 transition-colors ${
+                  className={`flex items-center gap-2 transition-colors text-sm ${
                     isLiked ? "text-pink-600 hover:text-pink-700" : "text-gray-600 hover:text-pink-600"
                   }`}
                 >
-                  <Heart className={`w-5 h-5 ${isLiked ? "fill-current" : ""}`} />
-                  <span className="font-medium">
+                  <Heart className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`} />
+                  <span className="text-sm">
                     {post.likes} {post.likes === 1 ? "like" : "likes"}
                   </span>
                 </Button>
-                <div className="flex items-center gap-2 text-gray-600">
-                  <MessageCircle className="w-5 h-5" />
-                  <span className="font-medium">
+                <div className="flex items-center gap-2 text-gray-600 text-sm">
+                  <MessageCircle className="w-4 h-4" />
+                  <span>
                     {post.comments?.length || 0} {(post.comments?.length || 0) === 1 ? "comment" : "comments"}
                   </span>
                 </div>
@@ -281,95 +281,87 @@ function PostContent() {
             </CardFooter>
           </Card>
 
-          <div className="space-y-8">
-            <div className="flex items-center gap-3">
-              <h2 className="text-2xl font-bold text-gray-900">Comments</h2>
-              <span className="bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-sm font-medium">
+          <div className="space-y-6">
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-bold text-gray-900">Comments</h2>
+              <span className="bg-pink-100 text-pink-700 px-2.5 py-1 rounded-full text-xs font-semibold">
                 {post.comments?.length || 0}
               </span>
             </div>
 
             {auth.token ? (
-              <Card className="shadow-sm border-0 bg-white">
-                <CardContent className="p-6">
-                  <form onSubmit={handleCommentSubmit} className="space-y-4">
-                    <div className="flex items-start gap-4">
-                      <Avatar className="w-10 h-10 ring-2 ring-pink-100">
-                        <AvatarFallback className="bg-gradient-to-br from-pink-100 to-pink-200 text-pink-700 font-semibold">
-                          {auth.user?.username?.[0]?.toUpperCase() || <User className="w-4 h-4" />}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <Textarea
-                          placeholder="Share your thoughts..."
-                          value={commentContent}
-                          onChange={(e) => setCommentContent(e.target.value)}
-                          className="min-h-[120px] resize-none border-gray-200 focus:border-pink-300 focus:ring-pink-200"
-                        />
-                      </div>
+              <Card className="shadow-sm border-0 bg-white p-4">
+                <form onSubmit={handleCommentSubmit} className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <Avatar className="w-9 h-9 flex-shrink-0 mt-1">
+                      <AvatarFallback>
+                        {auth.user?.username?.[0]?.toUpperCase() || "U"}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <Textarea
+                        placeholder="Share your thoughts..."
+                        value={commentContent}
+                        onChange={(e) => setCommentContent(e.target.value)}
+                        className="min-h-[100px] resize-none text-sm border-gray-200 focus:border-pink-300 focus:ring-pink-200"
+                      />
                     </div>
-                    <div className="flex justify-end">
-                      <Button
-                        type="submit"
-                        disabled={!commentContent.trim() || submittingComment}
-                        className="bg-gradient-to-r from-pink-600 to-pink-700 hover:from-pink-700 hover:to-pink-800 shadow-sm px-6"
-                      >
-                        {submittingComment ? "Posting..." : "Post Comment"}
-                      </Button>
-                    </div>
-                  </form>
-                </CardContent>
+                  </div>
+                  <div className="flex justify-end">
+                    <Button
+                      type="submit"
+                      disabled={!commentContent.trim() || submittingComment}
+                      className="bg-gradient-to-r from-pink-600 to-pink-700 hover:from-pink-700 hover:to-pink-800 text-white shadow-sm px-5 py-2 text-sm"
+                    >
+                      {submittingComment ? "Posting..." : "Post"}
+                    </Button>
+                  </div>
+                </form>
               </Card>
             ) : (
               <Card className="shadow-sm border-0 bg-white">
-                <CardContent className="p-8 text-center">
+                <CardContent className="p-6 text-center">
                   <div className="max-w-sm mx-auto">
-                    <MessageCircle className="w-12 h-12 text-pink-300 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Join the conversation</h3>
-                    <p className="text-gray-600 mb-6">Sign in to share your thoughts and engage with the community</p>
+                    <MessageCircle className="w-10 h-10 text-pink-300 mx-auto mb-3" />
+                    <h3 className="text-base font-semibold text-gray-900 mb-2">Join the conversation</h3>
+                    <p className="text-sm text-gray-600 mb-4">Sign in to share your thoughts</p>
                     <Button
                       onClick={() => router.push("/login")}
-                      className="bg-gradient-to-r from-pink-600 to-pink-700 hover:from-pink-700 hover:to-pink-800 shadow-sm px-6"
+                      className="bg-gradient-to-r from-pink-600 to-pink-700 hover:from-pink-700 hover:to-pink-800 text-white shadow-sm px-5 py-2 text-sm"
                     >
-                      Sign In to Comment
+                      Sign In
                     </Button>
                   </div>
                 </CardContent>
               </Card>
             )}
 
-            {!post.comments || post.comments.length === 0 ? (
-              <Card className="shadow-sm border-0 bg-white">
-                <CardContent className="p-12 text-center">
-                  <MessageCircle className="w-16 h-16 text-gray-300 mx-auto mb-6" />
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">No comments yet</h3>
-                  <p className="text-gray-500 text-lg">Be the first to share your thoughts on this post!</p>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="space-y-4">
-                {post.comments.map((comment) => (
-                  <Card key={comment.id} className="shadow-sm border-0 bg-white hover:shadow-md transition-shadow">
-                    <CardContent className="p-6">
-                      <div className="flex items-start gap-4">
-                        <Avatar className="w-10 h-10 ring-2 ring-pink-100">
-                          <AvatarFallback className="bg-gradient-to-br from-pink-100 to-pink-200 text-pink-700 font-semibold">
-                            {comment.author?.username?.[0]?.toUpperCase() || <User className="w-4 h-4" />}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-3 mb-3">
-                            <span className="font-semibold text-gray-900">
-                              {comment.author?.username || "Unknown User"}
-                            </span>
-                            <span className="text-gray-500 text-sm font-medium">{formatTimeAgo(comment.createdAt)}</span>
-                          </div>
-                          <p className="text-gray-700 leading-relaxed">{comment.content}</p>
-                        </div>
+            {post.comments && post.comments.length > 0 ? (
+              <ul className="space-y-3">
+                {post.comments.map((c) => (
+                  <li key={c.id} className="flex items-start gap-3 p-4 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 hover:border-pink-200 hover:shadow-sm transition-all">
+                    <Avatar className="w-8 h-8 flex-shrink-0 mt-0.5">
+                      <AvatarFallback>
+                        {(c.author?.username?.[0] ?? "U").toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-baseline gap-2 mb-1">
+                        <span className="text-sm font-semibold text-gray-900">{c.author?.username ?? "Unknown"}</span>
+                        <span className="text-xs text-gray-500">{formatTimeAgo(c.createdAt)}</span>
                       </div>
-                    </CardContent>
-                  </Card>
+
+                      <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap break-words">
+                        {c.content}
+                      </p>
+                    </div>
+                  </li>
                 ))}
+              </ul>
+            ) : (
+              <div className="text-sm text-gray-600 text-center py-6">
+                No comments yet — be the first to respond.
               </div>
             )}
           </div>

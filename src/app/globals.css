@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Import a soulful, readable font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -119,4 +122,37 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* base */
+html, body, #__next {
+  height: 100%;
+  background: var(--bg);
+  font-family: var(--font-sans);
+  color: var(--text);
+}
+
+/* Prevent layout shift from scrollbar */
+html {
+  overflow-y: scroll;
+}
+
+/* comfy card helper */
+.comfy-card {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  background: var(--surface);
+  border: 1px solid rgba(15,23,42,0.04);
+}
+
+/* small rustic accent for avatar fallback */
+.avatar-fallback {
+  background: linear-gradient(135deg,#fff0f4,#fff7fb);
+  color: var(--accent);
+}
+
+/* subtle button focus */
+.btn-focus:focus {
+  outline: 3px solid rgba(217,70,120,0.12);
+  outline-offset: 2px;
 }

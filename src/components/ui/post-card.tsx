@@ -1,10 +1,9 @@
 "use client"
 
-import { Heart, MessageCircle, MoreHorizontal } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
+import React from "react"
+import { Heart, MessageCircle } from "lucide-react"
 
-interface PostCardProps {
+type PostCardProps = {
   id: string
   author: string
   content: string
@@ -12,12 +11,11 @@ interface PostCardProps {
   comments: number
   timeAgo: string
   isLiked?: boolean
-  onLike: () => void | Promise<void>
-  onComment: () => void
+  onLike?: () => void
+  onComment?: () => void
 }
 
 export function PostCard({
-  id,
   author,
   content,
   likes,
@@ -27,58 +25,57 @@ export function PostCard({
   onLike,
   onComment,
 }: PostCardProps) {
+  const initial = author?.[0]?.toUpperCase() ?? "U"
+
   return (
-    <Card className="w-full hover:shadow-md transition-shadow duration-200">
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-pink-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-              {author.charAt(0).toUpperCase()}
-            </div>
-            <div>
-              <p className="font-semibold text-gray-900">{author}</p>
-              <p className="text-sm text-gray-500">{timeAgo}</p>
-            </div>
+    <article
+      className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-sm hover:shadow-md transition-all transform hover:-translate-y-0.5 duration-150 border border-gray-200 hover:border-pink-200"
+      role="article"
+    >
+      <div className="p-5">
+        <header className="flex items-center gap-3">
+          <div
+            className="w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm overflow-hidden"
+            aria-hidden
+            style={{ background: "linear-gradient(135deg,#ffdfe8,#ffeef6)" }}
+          >
+            {initial}
           </div>
-          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-gray-600">
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
+          <div className="flex flex-col">
+            <span className="text-sm font-medium text-gray-900">{author}</span>
+            <span className="text-xs text-gray-500">{timeAgo}</span>
+          </div>
+        </header>
+
+        <div className="mt-4 text-gray-800 text-sm leading-relaxed whitespace-pre-wrap">
+          {content}
         </div>
-      </CardHeader>
 
-      <CardContent className="pt-0 pb-4">
-        <p className="text-gray-800 leading-relaxed">{content}</p>
-      </CardContent>
-
-      <CardFooter className="pt-0 border-t border-gray-100">
-        <div className="flex items-center justify-between w-full">
-          <div className="flex items-center space-x-6">
-            <Button
-              variant="ghost"
-              size="sm"
+        <footer className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <button
               onClick={onLike}
-              className={`flex items-center space-x-2 hover:bg-pink-50 hover:text-pink-600 transition-colors duration-200 ${
-                isLiked ? "text-pink-600" : "text-gray-500"
+              aria-pressed={isLiked}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-150 ${
+                isLiked
+                  ? "text-pink-600 bg-pink-50 hover:bg-pink-100"
+                  : "text-gray-600 hover:text-pink-600 hover:bg-gray-100"
               }`}
             >
-              <Heart className={`h-4 w-4 ${isLiked ? "fill-current" : ""}`} />
-              <span className="text-sm font-medium">{isLiked ? "Liked" : "Like"}</span>
-              <span className="text-sm font-medium">({likes})</span>
-            </Button>
+              <Heart className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`} />
+              <span>{likes}</span>
+            </button>
 
-            <Button
-              variant="ghost"
-              size="sm"
+            <button
               onClick={onComment}
-              className="flex items-center space-x-2 text-gray-500 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-all"
             >
-              <MessageCircle className="h-4 w-4" />
-              <span className="text-sm font-medium">Comment</span>
-              <span className="text-sm font-medium">({comments})</span>
-            </Button>
+              <MessageCircle className="w-4 h-4" />
+              <span>{comments}</span>
+            </button>
           </div>
-        </div>
-      </CardFooter>
-    </Card>
+        </footer>
+      </div>
+    </article>
   )
 }
