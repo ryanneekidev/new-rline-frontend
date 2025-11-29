@@ -5,7 +5,7 @@ import type React from "react"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Navigation } from "@/components/ui/navigation"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -61,86 +61,88 @@ export default function CreatePage() {
 
   if (!token) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-background">
         <Navigation />
         <div className="flex items-center justify-center py-12">
-          <p className="text-gray-600">Redirecting to login...</p>
+          <p className="text-sm text-foreground/70">Redirecting to login...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Navigation />
 
-      <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl w-full">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900">Create a Post</h2>
-            <p className="mt-2 text-sm text-gray-600">Share your thoughts with the RLine community</p>
-          </div>
+      <main className="max-w-4xl mx-auto px-4 py-8">
+        <div className="space-y-6">
+          <header className="space-y-1">
+            <p className="text-xs font-medium uppercase tracking-[0.2em] text-foreground/40">Create</p>
+            <h1 className="text-2xl font-semibold text-foreground">Share your thoughts</h1>
+            <p className="text-sm text-foreground/60">Write something meaningful for the RLine community.</p>
+          </header>
 
-          <Card className="shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-center text-pink-600">New Post</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
+          <Card className="shadow-sm">
+            <CardContent className="p-6">
+              <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
-                  <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-                    Post Title
+                  <label htmlFor="title" className="block text-xs font-medium uppercase tracking-[0.1em] text-foreground/50 mb-2">
+                    Title
                   </label>
                   <Input
                     id="title"
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    placeholder="Enter your post title..."
+                    placeholder="Give your post a title..."
                     className="w-full"
                     disabled={isLoading}
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-2">
-                    Post Content
+                  <label htmlFor="content" className="block text-xs font-medium uppercase tracking-[0.1em] text-foreground/50 mb-2">
+                    Content
                   </label>
                   <Textarea
                     id="content"
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     placeholder="What's on your mind?"
-                    className="w-full min-h-[120px] resize-none"
+                    className="w-full min-h-[160px] resize-none"
                     disabled={isLoading}
                   />
                 </div>
 
-                {error && <div className="text-red-600 text-sm text-center bg-red-50 p-3 rounded-md">{error}</div>}
+                {error && (
+                  <div className="rounded-lg border border-red-500/30 bg-red-50/50 p-3 text-sm text-red-700">
+                    {error}
+                  </div>
+                )}
 
-                <div className="flex gap-4">
+                <div className="flex items-center gap-3 pt-2">
                   <Button
                     type="button"
                     variant="outline"
                     onClick={() => router.push("/")}
-                    className="flex-1"
+                    className="flex-1 rounded-full border-border/80 text-foreground/70 hover:text-foreground hover:bg-foreground/5"
                     disabled={isLoading}
                   >
                     Cancel
                   </Button>
                   <Button
                     type="submit"
-                    className="flex-1 bg-pink-600 hover:bg-pink-700 text-white"
+                    className="flex-1 rounded-full bg-gradient-to-r from-pink-500 to-pink-600 text-white shadow-sm hover:from-pink-600 hover:to-pink-700"
                     disabled={isLoading || !title.trim() || !content.trim()}
                   >
-                    {isLoading ? "Creating..." : "Create Post"}
+                    {isLoading ? "Creating..." : "Publish"}
                   </Button>
                 </div>
               </form>
             </CardContent>
           </Card>
         </div>
-      </div>
+      </main>
     </div>
   )
 }

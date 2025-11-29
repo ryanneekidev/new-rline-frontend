@@ -101,22 +101,44 @@ export function PostsFeed({ showHeader = true }: { showHeader?: boolean }) {
   }
 
   if (loading) {
-    return <div className="text-center py-8">Loading posts...</div>
+    return (
+      <div className="space-y-4">
+        {[...Array(3)].map((_, idx) => (
+          <div
+            key={idx}
+            className="animate-pulse rounded-2xl border border-border/70 bg-white/80 px-5 py-5 ring-1 ring-black/5"
+          >
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-full bg-border/80" />
+              <div className="flex-1 space-y-2">
+                <div className="h-3 w-1/3 rounded bg-border/80" />
+                <div className="h-3 w-1/4 rounded bg-border/60" />
+              </div>
+            </div>
+            <div className="mt-4 space-y-2">
+              <div className="h-3 w-full rounded bg-border/70" />
+              <div className="h-3 w-2/3 rounded bg-border/60" />
+            </div>
+          </div>
+        ))}
+      </div>
+    )
   }
 
   return (
     <section className="space-y-6">
       {showHeader && (
-        <header className="flex items-center justify-between mb-2">
-          <h2 className="text-lg font-semibold text-gray-900">Latest</h2>
-          <p className="text-sm text-gray-500">A simple, soulful feed</p>
+        <header className="space-y-1">
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-foreground/40">Latest</p>
+          <h2 className="text-xl font-semibold text-foreground">A simple, soulful feed</h2>
+          <p className="text-sm text-foreground/60">Gentle microblogging without the noise.</p>
         </header>
       )}
 
-      <div className="space-y-6">
+      <div className="space-y-5">
         {posts.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-gray-200 bg-white p-8 text-center">
-            <p className="text-gray-600">No posts yet — be the first to share something.</p>
+          <div className="rounded-2xl border border-dashed border-border/70 bg-white/70 p-10 text-center">
+            <p className="text-sm text-foreground/70">No posts yet — be the first to share something.</p>
           </div>
         ) : (
           posts.map((post) => {
@@ -130,6 +152,7 @@ export function PostsFeed({ showHeader = true }: { showHeader?: boolean }) {
                 content={post.content}
                 likes={post.likes}
                 comments={post.comments?.length ?? 0}
+                title={post.title}
                 timeAgo={formatTimeAgo(post.createdAt)}
                 isLiked={isLiked}
                 onLike={() => (isLiked ? handleDislikePost(post.id) : handleLikePost(post.id))}

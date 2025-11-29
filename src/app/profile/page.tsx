@@ -1,12 +1,25 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { useAuth } from "@/contexts/auth-context"
 import { Navigation } from "@/components/ui/navigation"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
+import { Heart, FileText } from "lucide-react"
+import { getPosts } from "@/lib/api"
 
 export default function ProfilePage() {
   const { user, logout } = useAuth()
+  const [postsCount, setPostsCount] = useState(0)
+
+  useEffect(() => {
+    if (user?.username) {
+      getPosts().then((posts) => {
+        const userPosts = posts.filter((post) => post.author?.username === user.username)
+        setPostsCount(userPosts.length)
+      })
+    }
+  }, [user?.username])
 
   const handleLogout = () => {
     logout()
@@ -14,12 +27,12 @@ export default function ProfilePage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-background">
         <Navigation />
-        <main className="max-w-2xl mx-auto py-12 px-4">
-          <Card>
-            <CardContent className="pt-6">
-              <p className="text-center text-gray-600">Please log in to view your profile.</p>
+        <main className="max-w-4xl mx-auto px-4 py-12">
+          <Card className="shadow-sm">
+            <CardContent className="p-8 text-center">
+              <p className="text-sm text-foreground/70">Please log in to view your profile.</p>
             </CardContent>
           </Card>
         </main>
@@ -27,34 +40,75 @@ export default function ProfilePage() {
     )
   }
 
+  const initial = user.username?.[0]?.toUpperCase() ?? "U"
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Navigation />
-      <main className="max-w-2xl mx-auto py-12 px-4">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold text-gray-900">User Profile</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <label className="text-sm font-medium text-gray-600">Username</label>
-              <p className="text-lg text-gray-900">{user.username}</p>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-600">Email</label>
-              <p className="text-lg text-gray-900">{user.email}</p>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-600">Posts Liked</label>
-              <p className="text-lg text-gray-900">{user.like?.length || 0}</p>
-            </div>
-            <div className="pt-4">
-              <Button onClick={handleLogout} variant="destructive" className="w-full">
-                Logout
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+      <main className="max-w-4xl mx-auto px-4 py-8">
+        <div className="space-y-6">
+          <header className="space-y-1">
+            <p className="text-xs font-medium uppercase tracking-[0.2em] text-foreground/40">Profile</p>
+            <h1 className="text-2xl font-semibold text-foreground">Your account</h1>
+            <p className="text-sm text-foreground/60">Manage your RLine presence and preferences.</p>
+          </header>
+
+          <Card className="shadow-sm">
+            <CardContent className="p-6">
+              <div className="flex items-start gap-4 mb-6">
+                <div
+                  className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full text-lg font-semibold text-pink-700"
+                  aria-hidden
+                  style={{
+                    background:
+                      "radial-gradient(circle at 20% 20%, rgba(244,114,182,0.18), transparent 55%), radial-gradient(circle at 80% 0%, rgba(59,130,246,0.18), transparent 45%), #fff5fa",
+                  }}
+                >
+                  {initial}
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <h2 className="text-lg font-semibold text-foreground mb-1">{user.username}</h2>
+                  <p className="text-sm text-foreground/60">{user.email}</p>
+                </div>
+              </div>
+
+              <div className="pt-6 border-t border-border/80">
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-500/10">
+                      <Heart className="h-5 w-5 text-pink-600" />
+                    </div>
+                    <div>
+                      <p className="text-base font-semibold text-foreground">{user.like?.length || 0}</p>
+                      <p className="text-xs text-foreground/50">Posts liked</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500/10">
+                      <FileText className="h-5 w-5 text-blue-600" />
+                    </div>
+                    <div>
+                      <p className="text-base font-semibold text-foreground">{postsCount}</p>
+                      <p className="text-xs text-foreground/50">Your posts</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 pt-6 border-t border-border/80">
+                <Button
+                  onClick={handleLogout}
+                  variant="outline"
+                  className="w-full rounded-full border-border/80 text-foreground/70 hover:text-foreground hover:bg-foreground/5"
+                >
+                  Sign out
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </main>
     </div>
   )

@@ -4,13 +4,14 @@ import type React from "react"
 
 import { useState, useEffect, Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Heart, MessageCircle, ArrowLeft } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import Navigation from "@/components/ui/navigation"
+import { PostCard } from "@/components/ui/post-card"
 
 interface Comment {
   id: string
@@ -175,135 +176,143 @@ function PostContent() {
 
   if (!postId) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen">
         <Navigation />
-        <div className="flex items-center justify-center pt-20">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">Post not found</h1>
-            <Button onClick={() => router.push("/")}>
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Home
+        <main className="mx-auto flex max-w-4xl items-center justify-center px-4 py-16">
+          <div className="rounded-2xl border border-border/70 bg-white/95 px-8 py-10 text-center shadow-sm">
+            <h1 className="mb-3 text-xl font-semibold text-foreground">Post not found</h1>
+            <p className="mb-6 text-sm text-foreground/65">
+              We couldn&apos;t find that post. It may have been removed or the link is incorrect.
+            </p>
+            <Button
+              variant="outline"
+              onClick={() => router.push("/")}
+              className="inline-flex items-center gap-2 rounded-full border-border/80 bg-background/80 px-4 py-1.5 text-xs font-medium text-foreground/80 hover:border-foreground/40 hover:text-foreground"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to home
             </Button>
           </div>
-        </div>
+        </main>
       </div>
     )
   }
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen">
         <Navigation />
-        <div className="flex items-center justify-center pt-20">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading post...</p>
+        <main className="mx-auto max-w-4xl px-4 py-10">
+          <div className="space-y-4">
+            <div className="h-5 w-32 animate-pulse rounded bg-border/70" />
+            <div className="rounded-2xl border border-border/70 bg-white/90 px-5 py-6 shadow-sm ring-1 ring-black/5">
+              <div className="flex items-start gap-3">
+                <div className="h-11 w-11 animate-pulse rounded-full bg-border/70" />
+                <div className="flex-1 space-y-3">
+                  <div className="h-3 w-1/3 rounded bg-border/80" />
+                  <div className="h-3 w-2/3 rounded bg-border/70" />
+                  <div className="h-3 w-full rounded bg-border/60" />
+                  <div className="h-3 w-5/6 rounded bg-border/60" />
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+        </main>
       </div>
     )
   }
 
   if (!post) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen">
         <Navigation />
-        <div className="flex items-center justify-center pt-20">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">Post not found</h1>
-            <Button onClick={() => router.push("/")}>
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Home
+        <main className="mx-auto flex max-w-4xl items-center justify-center px-4 py-16">
+          <div className="rounded-2xl border border-border/70 bg-white/95 px-8 py-10 text-center shadow-sm">
+            <h1 className="mb-3 text-xl font-semibold text-foreground">Post not found</h1>
+            <p className="mb-6 text-sm text-foreground/65">
+              We couldn&apos;t find that post. It may have been removed or the link is incorrect.
+            </p>
+            <Button
+              variant="outline"
+              onClick={() => router.push("/")}
+              className="inline-flex items-center gap-2 rounded-full border-border/80 bg-background/80 px-4 py-1.5 text-xs font-medium text-foreground/80 hover:border-foreground/40 hover:text-foreground"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to home
             </Button>
           </div>
-        </div>
+        </main>
       </div>
     )
   }
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen">
         <Navigation />
 
-        <main className="max-w-4xl mx-auto px-6 py-8">
-          <div className="flex items-center justify-between mb-6">
+        <main className="mx-auto max-w-4xl px-4 py-8 sm:py-10">
+          <div className="mb-6 flex items-center justify-between">
             <Button
               variant="outline"
               onClick={() => router.push("/")}
-              className="hover:bg-pink-50 hover:border-pink-300 transition-colors"
+              className="inline-flex items-center gap-2 rounded-full border-border/80 bg-background/80 px-4 py-1.5 text-xs font-medium text-foreground/80 hover:border-foreground/40 hover:text-foreground"
             >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Home
+              <ArrowLeft className="h-4 w-4" />
+              Back to feed
             </Button>
           </div>
 
-          <Card className="mb-8 shadow-sm border-0 bg-white">
-            <CardContent className="p-5">
-              <div className="flex items-start gap-4 mb-5">
-                <Avatar className="w-12 h-12 ring-2 ring-pink-100">
-                  <AvatarFallback className="avatar-fallback">
-                    {post.author?.username?.[0]?.toUpperCase() || "U"}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="font-semibold text-gray-900">{post.author?.username || "Unknown User"}</span>
-                    <span className="text-gray-500 text-xs">{formatTimeAgo(post.createdAt)}</span>
-                  </div>
-                  <h1 className="text-xl font-bold text-gray-900 mb-3 leading-tight">{post.title}</h1>
-                  <p className="text-gray-700 leading-relaxed text-sm">{post.content}</p>
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter className="px-5 py-4 border-t bg-gray-50/50">
-              <div className="flex items-center gap-6">
-                <Button
-                  variant="ghost"
-                  onClick={() => onToggleLike(postId!, !isLiked)}
-                  disabled={likingPost}
-                  className={`flex items-center gap-2 transition-colors text-sm ${
-                    isLiked ? "text-pink-600 hover:text-pink-700" : "text-gray-600 hover:text-pink-600"
-                  }`}
-                >
-                  <Heart className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`} />
-                  <span className="text-sm">
-                    {post.likes} {post.likes === 1 ? "like" : "likes"}
-                  </span>
-                </Button>
-                <div className="flex items-center gap-2 text-gray-600 text-sm">
-                  <MessageCircle className="w-4 h-4" />
-                  <span>
-                    {post.comments?.length || 0} {(post.comments?.length || 0) === 1 ? "comment" : "comments"}
-                  </span>
-                </div>
-              </div>
-            </CardFooter>
-          </Card>
+          <section className="mb-8">
+            <PostCard
+              id={post.id}
+              author={post.author?.username ?? "Unknown"}
+              content={post.content}
+              title={post.title}
+              likes={post.likes}
+              comments={post.comments?.length ?? 0}
+              timeAgo={formatTimeAgo(post.createdAt)}
+              isLiked={isLiked}
+              onLike={() => onToggleLike(postId!, !isLiked)}
+              onComment={() => {
+                const replySection = document.getElementById("rline-replies")
+                if (replySection) replySection.scrollIntoView({ behavior: "smooth", block: "start" })
+              }}
+            />
+          </section>
 
           <div className="space-y-6">
-            <div className="flex items-center gap-2">
-              <h2 className="text-lg font-bold text-gray-900">Comments</h2>
-              <span className="bg-pink-100 text-pink-700 px-2.5 py-1 rounded-full text-xs font-semibold">
-                {post.comments?.length || 0}
+            <header id="rline-replies" className="flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-xs font-medium uppercase tracking-[0.2em] text-foreground/40">
+                  Replies
+                </p>
+                <h2 className="text-lg font-semibold text-foreground">Conversation</h2>
+                <p className="text-xs text-foreground/60">
+                  Thoughts, reactions, and quiet back-and-forth.
+                </p>
+              </div>
+              <span className="hidden rounded-full border border-border/80 px-3 py-1 text-xs font-medium text-foreground/70 sm:inline-flex">
+                {post.comments?.length || 0}{" "}
+                {(post.comments?.length || 0) === 1 ? "reply" : "replies"}
               </span>
-            </div>
+            </header>
 
             {auth.token ? (
-              <Card className="shadow-sm border-0 bg-white p-4">
+              <Card className="p-4 shadow-sm">
                 <form onSubmit={handleCommentSubmit} className="space-y-3">
                   <div className="flex items-start gap-3">
-                    <Avatar className="w-9 h-9 flex-shrink-0 mt-1">
+                    <Avatar className="mt-1 h-9 w-9 flex-shrink-0 ring-2 ring-pink-100">
                       <AvatarFallback>
                         {auth.user?.username?.[0]?.toUpperCase() || "U"}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="flex-1 min-w-0">
+                    <div className="min-w-0 flex-1">
                       <Textarea
                         placeholder="Share your thoughts..."
                         value={commentContent}
                         onChange={(e) => setCommentContent(e.target.value)}
-                        className="min-h-[100px] resize-none text-sm border-gray-200 focus:border-pink-300 focus:ring-pink-200"
+                        className="min-h-[100px] resize-none border-input text-sm"
                       />
                     </div>
                   </div>
@@ -311,7 +320,7 @@ function PostContent() {
                     <Button
                       type="submit"
                       disabled={!commentContent.trim() || submittingComment}
-                      className="bg-gradient-to-r from-pink-600 to-pink-700 hover:from-pink-700 hover:to-pink-800 text-white shadow-sm px-5 py-2 text-sm"
+                      className="rounded-full bg-gradient-to-r from-pink-600 to-pink-700 px-5 py-2 text-sm text-white shadow-sm hover:from-pink-700 hover:to-pink-800"
                     >
                       {submittingComment ? "Posting..." : "Post"}
                     </Button>
@@ -319,15 +328,19 @@ function PostContent() {
                 </form>
               </Card>
             ) : (
-              <Card className="shadow-sm border-0 bg-white">
-                <CardContent className="p-6 text-center">
-                  <div className="max-w-sm mx-auto">
-                    <MessageCircle className="w-10 h-10 text-pink-300 mx-auto mb-3" />
-                    <h3 className="text-base font-semibold text-gray-900 mb-2">Join the conversation</h3>
-                    <p className="text-sm text-gray-600 mb-4">Sign in to share your thoughts</p>
+              <Card>
+                <CardContent className="mx-auto max-w-sm p-6 text-center">
+                  <div>
+                    <MessageCircle className="mx-auto mb-3 h-10 w-10 text-pink-300" />
+                    <h3 className="mb-2 text-base font-semibold text-foreground">
+                      Join the conversation
+                    </h3>
+                    <p className="mb-4 text-sm text-foreground/70">
+                      Sign in to share your thoughts and reply to this post.
+                    </p>
                     <Button
                       onClick={() => router.push("/login")}
-                      className="bg-gradient-to-r from-pink-600 to-pink-700 hover:from-pink-700 hover:to-pink-800 text-white shadow-sm px-5 py-2 text-sm"
+                      className="rounded-full bg-gradient-to-r from-pink-600 to-pink-700 px-5 py-2 text-sm text-white shadow-sm hover:from-pink-700 hover:to-pink-800"
                     >
                       Sign In
                     </Button>
@@ -339,20 +352,27 @@ function PostContent() {
             {post.comments && post.comments.length > 0 ? (
               <ul className="space-y-3">
                 {post.comments.map((c) => (
-                  <li key={c.id} className="flex items-start gap-3 p-4 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 hover:border-pink-200 hover:shadow-sm transition-all">
-                    <Avatar className="w-8 h-8 flex-shrink-0 mt-0.5">
+                  <li
+                    key={c.id}
+                    className="flex items-start gap-3 rounded-2xl border border-border/80 bg-white/95 p-4 shadow-sm transition-all hover:border-pink-200 hover:shadow-md"
+                  >
+                    <Avatar className="mt-0.5 h-8 w-8 flex-shrink-0 ring-2 ring-pink-100">
                       <AvatarFallback>
                         {(c.author?.username?.[0] ?? "U").toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
 
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-baseline gap-2 mb-1">
-                        <span className="text-sm font-semibold text-gray-900">{c.author?.username ?? "Unknown"}</span>
-                        <span className="text-xs text-gray-500">{formatTimeAgo(c.createdAt)}</span>
+                    <div className="min-w-0 flex-1">
+                      <div className="mb-1 flex items-baseline gap-2">
+                        <span className="text-sm font-semibold text-foreground">
+                          {c.author?.username ?? "Unknown"}
+                        </span>
+                        <span className="text-xs text-foreground/50">
+                          {formatTimeAgo(c.createdAt)}
+                        </span>
                       </div>
 
-                      <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap break-words">
+                      <p className="text-sm leading-relaxed text-foreground/90 whitespace-pre-wrap break-words">
                         {c.content}
                       </p>
                     </div>

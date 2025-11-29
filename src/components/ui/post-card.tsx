@@ -10,6 +10,7 @@ type PostCardProps = {
   likes: number
   comments: number
   timeAgo: string
+  title?: string
   isLiked?: boolean
   onLike?: () => void
   onComment?: () => void
@@ -21,6 +22,7 @@ export function PostCard({
   likes,
   comments,
   timeAgo,
+  title,
   isLiked = false,
   onLike,
   onComment,
@@ -29,53 +31,67 @@ export function PostCard({
 
   return (
     <article
-      className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-sm hover:shadow-md transition-all transform hover:-translate-y-0.5 duration-150 border border-gray-200 hover:border-pink-200"
+      className="group rounded-2xl border border-border/70 bg-gradient-to-b from-white/98 via-white to-white/95 px-5 py-4 shadow-sm ring-1 ring-black/5 transition-all duration-200 hover:shadow-lg"
       role="article"
     >
-      <div className="p-5">
-        <header className="flex items-center gap-3">
-          <div
-            className="w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm overflow-hidden"
-            aria-hidden
-            style={{ background: "linear-gradient(135deg,#ffdfe8,#ffeef6)" }}
-          >
-            {initial}
-          </div>
-          <div className="flex flex-col">
-            <span className="text-sm font-medium text-gray-900">{author}</span>
-            <span className="text-xs text-gray-500">{timeAgo}</span>
-          </div>
-        </header>
-
-        <div className="mt-4 text-gray-800 text-sm leading-relaxed whitespace-pre-wrap">
-          {content}
+      <header className="flex items-start gap-3">
+        <div
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-pink-700"
+          aria-hidden
+          style={{
+            background:
+              "radial-gradient(circle at 20% 20%, rgba(244,114,182,0.18), transparent 55%), radial-gradient(circle at 80% 0%, rgba(59,130,246,0.18), transparent 45%), #fff5fa",
+          }}
+        >
+          {initial}
         </div>
 
-        <footer className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
+        <div className="flex flex-1 flex-col">
           <div className="flex items-center gap-2">
-            <button
-              onClick={onLike}
-              aria-pressed={isLiked}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-150 ${
-                isLiked
-                  ? "text-pink-600 bg-pink-50 hover:bg-pink-100"
-                  : "text-gray-600 hover:text-pink-600 hover:bg-gray-100"
-              }`}
-            >
-              <Heart className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`} />
-              <span>{likes}</span>
-            </button>
-
-            <button
-              onClick={onComment}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-all"
-            >
-              <MessageCircle className="w-4 h-4" />
-              <span>{comments}</span>
-            </button>
+            <span className="text-sm font-semibold text-foreground">{author}</span>
+            <span className="text-xs text-foreground/50">{timeAgo}</span>
           </div>
-        </footer>
+          <span className="text-[0.75rem] text-foreground/45">Public post</span>
+        </div>
+      </header>
+
+      <div className="mt-3 space-y-2 text-sm leading-relaxed text-foreground/90 whitespace-pre-line">
+        {title && (
+          <h2 className="text-base font-semibold leading-snug text-foreground">
+            {title}
+          </h2>
+        )}
+        <p>{content}</p>
       </div>
+
+      <footer className="mt-5 flex items-center justify-end gap-2 border-t border-border/80 pt-4">
+        <button
+          onClick={onLike}
+          aria-pressed={isLiked}
+          className={[
+            "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold transition-all",
+            isLiked
+              ? "border-pink-500/40 bg-pink-500/10 text-pink-600 hover:border-pink-500/60"
+              : "border-border/80 text-foreground/70 hover:text-pink-600 hover:border-pink-500/30",
+          ].join(" ")}
+        >
+          <Heart className={`h-4 w-4 ${isLiked ? "fill-current" : ""}`} />
+          <span>
+            {isLiked ? "Liked" : "Like"}{" "}
+            <span className="opacity-60">{likes}</span>
+          </span>
+        </button>
+
+        <button
+          onClick={onComment}
+          className="inline-flex items-center gap-1.5 rounded-full border border-border/80 px-3 py-1 text-xs font-semibold text-foreground/70 transition-all hover:border-blue-500/40 hover:text-blue-600"
+        >
+          <MessageCircle className="h-4 w-4" />
+          <span>
+            Reply <span className="opacity-60">{comments}</span>
+          </span>
+        </button>
+      </footer>
     </article>
   )
 }
