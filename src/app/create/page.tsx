@@ -16,7 +16,9 @@ export default function CreatePage() {
   const [content, setContent] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
-  const { user, token } = useAuth()
+  const auth = useAuth()
+  const user = auth?.user
+  const token = auth?.token || ""
   const router = useRouter()
 
   useEffect(() => {
@@ -37,13 +39,13 @@ export default function CreatePage() {
     setError("")
 
     try {
-      const response = await fetch("https://api.rline.ryanneeki.xyz/posts", {
+      const response = await fetch("http://localhost:4000/posts", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
           Authorization: `Bearer ${token}`,
         },
-        body: `title=${encodeURIComponent(title)}&content=${encodeURIComponent(content)}&userId=${user?.id}`,
+        body: `title=${encodeURIComponent(title)}&content=${content}&userId=${user?.id}`,
       })
 
       if (response.ok) {
