@@ -13,15 +13,15 @@ export const makeAuthenticatedRequest = async (
   // First attempt with current token
   let response = await fetch(url, {
     ...options,
-    credentials: "include",
     headers: {
       ...options.headers,
       Authorization: `Bearer ${token}`,
-    }
+    },
+    credentials: "include"
   })
 
   // If we get 401, try to refresh and retry once
-  if (response.status === 403) {
+  if (response.status === 403 || response.status === 401) {
     const refreshResponse = await fetch("https://api.rline.ryanneeki.xyz/refresh", {
       method: "POST",
       credentials: "include",
