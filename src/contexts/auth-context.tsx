@@ -11,7 +11,7 @@ export type User = {
   like?: { id: string; postId: string }[]
 }
 
-type AuthContextType = {
+export type AuthContextType = {
   user: User | null
   token: string
   setUser: React.Dispatch<React.SetStateAction<User | null>>

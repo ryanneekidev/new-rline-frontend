@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useAuth } from "@/contexts/auth-context"
+import { makeAuthenticatedRequest } from '@/lib/authFetch'
 
 export default function CreatePage() {
   const [title, setTitle] = useState("")
@@ -39,21 +40,25 @@ export default function CreatePage() {
     setError("")
 
     try {
-      const response = await fetch("https://api.rline.ryanneeki.xyz/posts", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: `Bearer ${token}`,
+      const response = await makeAuthenticatedRequest(
+        "https://api.rline.ryanneeki.xyz/posts",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: `title=${encodeURIComponent(title)}&content=${content}&userId=${user?.id}`,
         },
-        body: `title=${encodeURIComponent(title)}&content=${content}&userId=${user?.id}`,
-      })
+        auth
+      )
+
+      const data = await response.json()
 
       if (response.ok) {
         router.push("/")
       } else {
-        const errorData = await response.json()
-        console.log(errorData)
-        setError(errorData.message || "Failed to create post")
+        console.log(data)
+        setError(data.message || "Failed to create post")
       }
     } catch (err) {
       console.log(err)
