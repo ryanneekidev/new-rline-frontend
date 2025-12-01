@@ -39,7 +39,7 @@ export default function CreatePage() {
     setError("")
 
     try {
-      const response = await fetch("http://localhost:4000/posts", {
+      const response = await fetch("https://api.rline.ryanneeki.xyz/posts", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -52,9 +52,11 @@ export default function CreatePage() {
         router.push("/")
       } else {
         const errorData = await response.json()
+        console.log(errorData)
         setError(errorData.message || "Failed to create post")
       }
     } catch (err) {
+      console.log(err)
       setError("Network error. Please try again.")
     } finally {
       setIsLoading(false)
