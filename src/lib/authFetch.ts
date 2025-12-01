@@ -13,6 +13,7 @@ export const makeAuthenticatedRequest = async (
   // First attempt with current token
   let response = await fetch(url, {
     ...options,
+    credentials: "include",
     headers: {
       ...options.headers,
       Authorization: `Bearer ${token}`,
