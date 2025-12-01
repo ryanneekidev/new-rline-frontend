@@ -64,6 +64,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
+        credentials: "include",
         body: `username=${username}&password=${password}`,
       })
       const json = await response.json()
@@ -103,6 +104,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
+        credentials: "include",
         body: `username=${username}&password=${password}&confirmedPassword=${confirmedPassword}&email=${email}`,
       })
       const json = await response.json()
