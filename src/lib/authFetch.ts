@@ -8,7 +8,7 @@ export const makeAuthenticatedRequest = async (
   auth: AuthContextType
 ): Promise<Response> => {
   // Get current token from auth context
-  let token = auth.token
+  const token = auth.token
 
   // First attempt with current token
   let response = await fetch(url, {
