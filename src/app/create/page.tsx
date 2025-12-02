@@ -92,7 +92,7 @@ export default function CreatePage() {
           </header>
 
           <Card className="shadow-sm">
-            <CardContent className="p-6">
+            <CardContent className="">
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
                   <label htmlFor="title" className="block text-xs font-medium uppercase tracking-[0.1em] text-foreground/50 mb-2">
