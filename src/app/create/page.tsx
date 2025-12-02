@@ -41,7 +41,7 @@ export default function CreatePage() {
 
     try {
       const response = await makeAuthenticatedRequest(
-        "https://api.rline.ryanneeki.xyz/posts",
+        `https://${process.env.API_URL}/posts`,
         {
           method: "POST",
           headers: {

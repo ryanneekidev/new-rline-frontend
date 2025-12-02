@@ -12,6 +12,7 @@ import { Heart, MessageCircle, ArrowLeft } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import Navigation from "@/components/ui/navigation"
 import { PostCard } from "@/components/ui/post-card"
+import { API_URL } from '@/lib/api-config';
 
 interface Comment {
   id: string
@@ -57,7 +58,7 @@ function PostContent() {
 
     try {
       setLoading(true)
-      const response = await fetch("https://api.rline.ryanneeki.xyz/post", {
+      const response = await fetch(`https://${process.env.API_URL}/post`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -88,7 +89,7 @@ function PostContent() {
 
     try {
       setSubmittingComment(true)
-      const response = await fetch("https://api.rline.ryanneeki.xyz/comment", {
+      const response = await fetch(`https://${process.env.API_URL}/comment`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -109,7 +110,7 @@ function PostContent() {
   }
 
   const likePost = async (postId: string, userId: string) => {
-    return fetch("https://api.rline.ryanneeki.xyz/posts/like", {
+    return fetch(`https://${process.env.API_URL}/posts/like`, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -119,7 +120,7 @@ function PostContent() {
   }
 
   const dislikePost = async (postId: string, userId: string, likeId: string) => {
-    return fetch("https://api.rline.ryanneeki.xyz/posts/dislike", {
+    return fetch(`https://${process.env.API_URL}/posts/dislike`, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",

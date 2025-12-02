@@ -6,6 +6,7 @@ import { PostCard } from "./post-card"
 import { getPosts, likePost, dislikePost, type Post } from "@/lib/api"
 import { useAuth } from "@/contexts/auth-context"
 import { formatTimeAgo } from "@/lib/utils"
+import { API_URL } from '@/lib/api-config';
 
 export function PostsFeed({ showHeader = true }: { showHeader?: boolean }) {
   const [posts, setPosts] = useState<Post[]>([])

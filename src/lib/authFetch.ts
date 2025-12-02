@@ -22,7 +22,7 @@ export const makeAuthenticatedRequest = async (
 
   // If we get 401, try to refresh and retry once
   if (response.status === 403 || response.status === 401) {
-    const refreshResponse = await fetch("https://api.rline.ryanneeki.xyz/refresh", {
+    const refreshResponse = await fetch(`https://${process.env.API_URL}/refresh`, {
       method: "POST",
       credentials: "include",
     })
@@ -34,7 +34,6 @@ export const makeAuthenticatedRequest = async (
       
       // Update context state using setters
       auth.setUser(decodedUser)
-      // Note: You need to add setToken to your context (see below)
       
       // Update localStorage
       localStorage.setItem("rline_token", newToken)

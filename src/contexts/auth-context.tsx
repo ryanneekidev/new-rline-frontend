@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = async (username: string, password: string) => {
     try {
       clearAuthErrors()
-      const response = await fetch("https://api.rline.ryanneeki.xyz/login", {
+      const response = await fetch(`https://${process.env.API_URL}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -99,7 +99,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const register = async (username: string, password: string, confirmedPassword: string, email: string) => {
     try {
       clearAuthErrors()
-      const response = await fetch("https://api.rline.ryanneeki.xyz/register", {
+      const response = await fetch(`https://${process.env.API_URL}/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
