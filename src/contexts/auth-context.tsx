@@ -44,6 +44,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const decodedUser = jwtDecode<User>(savedToken)
         setToken(savedToken)
         setUser(decodedUser)
+
+        const fetchUserLikes = async () => {
+          if (decodedUser?.id) {
+            const response = await fetch(`${API_URL}/users/${decodedUser.id}/likes`)
+            const data = await response.json()
+            setUser(prev => prev ? { ...prev, like: data.likes } : null)
+          }
+        }
+        fetchUserLikes()
       } catch (error) {
         console.error("Invalid token in localStorage:", error)
         localStorage.removeItem("rline_token")

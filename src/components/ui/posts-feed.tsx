@@ -50,8 +50,14 @@ export function PostsFeed({ showHeader = true }: { showHeader?: boolean }) {
 
     try {
       const response = await likePost(postId, auth.user!.id)
+      console.log("Like response:", response)
       // use real response to update auth if it contains canonical likes
-      if (response?.updatedLikes) auth.setUser((u) => (u ? { ...u, like: response.updatedLikes } : u))
+      if (response?.like) {
+        auth.setUser(prev => prev ? {
+          ...prev,
+          like: [...(prev.like || []).filter(l => l.postId !== postId), response.like]
+        } : null)
+      }
       // replace optimistic flag
       setPosts((prev) => prev.map((p) => (p.id === postId ? { ...p, _optimisticLiked: undefined } : p)))
     } catch (error) {
@@ -72,27 +78,39 @@ export function PostsFeed({ showHeader = true }: { showHeader?: boolean }) {
       return
     }
 
-    // optimistic local update
+    const likeRecord = auth.user!.like?.find((like) => like.postId === postId)
+
+    console.log("Dislike attempt:", {
+      postId,
+      likeRecord,
+      allLikes: auth.user!.like
+    })
+
+    if (!likeRecord?.id) {
+      console.error("Like record not found for post:", postId)
+      return
+    }
+
+    auth.togglePostLike(postId, false)
+
     setPosts((prev) =>
       prev.map((p) => (p.id === postId ? { ...p, likes: Math.max((p.likes ?? 1) - 1, 0), _optimisticLiked: false } : p))
     )
 
-    auth.togglePostLike(postId, false)
-
     try {
-      const likeId = auth.user!.like?.find((like) => like.postId === postId)?.id
-      if (likeId) {
-        const response = await dislikePost(postId, auth.user!.id, likeId)
-        if (response?.updatedLikes) auth.setUser((u) => (u ? { ...u, like: response.updatedLikes } : u))
-      }
+      const response = await dislikePost(postId, auth.user!.id, likeRecord.id)
+      console.log("Dislike response:", response)
+
+      // Remove from auth.user
+      auth.setUser(prev => prev ? {
+        ...prev,
+        like: (prev.like || []).filter(l => l.id !== likeRecord.id)
+      } : null)
+
       setPosts((prev) => prev.map((p) => (p.id === postId ? { ...p, _optimisticLiked: undefined } : p)))
     } catch (error) {
-      // revert
-      auth.togglePostLike(postId, true)
-      setPosts((prev) =>
-        prev.map((p) => (p.id === postId ? { ...p, likes: (p.likes ?? 0) + 1, _optimisticLiked: undefined } : p))
-      )
       console.error("Error disliking post:", error)
+      // revert...
     }
   }
 
