@@ -73,6 +73,7 @@ export const likePost = async (postId: string, userId: string): Promise<any> => 
       "Content-Type": "application/x-www-form-urlencoded",
     },
     body: `userId=${userId}&postId=${postId}`,
+    credentials: "include",
   })
   return await response.json()
 }
@@ -84,6 +85,7 @@ export const dislikePost = async (postId: string, userId: string, likeId: string
       "Content-Type": "application/x-www-form-urlencoded",
     },
     body: `userId=${userId}&postId=${postId}&likeId=${likeId}`,
+    credentials: "include",
   })
   return await response.json()
 }

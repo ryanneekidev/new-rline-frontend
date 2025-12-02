@@ -94,6 +94,7 @@ function PostContent() {
           "Content-Type": "application/x-www-form-urlencoded",
         },
         body: `userId=${auth.user?.id}&postId=${postId}&content=${encodeURIComponent(commentContent)}`,
+        credentials: "include",
       })
 
       if (response.ok) {
