@@ -73,7 +73,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (json.token) {
         const decodedUser = jwtDecode<User>(json.token)
         setToken(json.token)
-        setUser(decodedUser)
+        setUser({
+          ...decodedUser,
+          like: json.likes
+        })
         localStorage.setItem("rline_token", json.token)
         clearAuthErrors()
         router.push("/")

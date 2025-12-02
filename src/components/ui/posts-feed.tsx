@@ -17,7 +17,7 @@ export function PostsFeed({ showHeader = true }: { showHeader?: boolean }) {
     try {
       const fetchedPosts = await getPosts()
       // Sort posts by createdAt in descending order (newest first)
-      const sortedPosts = fetchedPosts.sort((a, b) => 
+      const sortedPosts = fetchedPosts.sort((a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       )
       setPosts(sortedPosts)
