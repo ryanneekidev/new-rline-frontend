@@ -1,6 +1,7 @@
 import type { AuthContextType } from "@/contexts/auth-context"
 import { jwtDecode } from "jwt-decode"
 import type { User } from "@/contexts/auth-context"
+import { API_URL } from '@/lib/api-config';
 
 export const makeAuthenticatedRequest = async (
   url: string,
@@ -22,7 +23,7 @@ export const makeAuthenticatedRequest = async (
 
   // If we get 401, try to refresh and retry once
   if (response.status === 403 || response.status === 401) {
-    const refreshResponse = await fetch(`https://${process.env.API_URL}/refresh`, {
+    const refreshResponse = await fetch(`https://${API_URL}/refresh`, {
       method: "POST",
       credentials: "include",
     })

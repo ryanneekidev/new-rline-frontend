@@ -15,7 +15,7 @@ export interface Post {
 
 export const getPosts = async (): Promise<Post[]> => {
   try {
-    const response = await fetch(`https://${process.env.API_URL}/posts`, {
+    const response = await fetch(`https://${API_URL}/posts`, {
       method: "GET",
     })
     const res = await response.json()
@@ -69,7 +69,7 @@ export const getPosts = async (): Promise<Post[]> => {
 }
 
 export const likePost = async (postId: string, userId: string): Promise<any> => {
-  const response = await fetch(`https://${process.env.API_URL}/posts/like`, {
+  const response = await fetch(`https://${API_URL}/posts/like`, {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
@@ -81,7 +81,7 @@ export const likePost = async (postId: string, userId: string): Promise<any> => 
 }
 
 export const dislikePost = async (postId: string, userId: string, likeId: string): Promise<any> => {
-  const response = await fetch(`https://${process.env.API_URL}/posts/dislike`, {
+  const response = await fetch(`https://${API_URL}/posts/dislike`, {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
