@@ -1,1 +1,1 @@
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.rline.ryanneeki.xyz';
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'api.rline.ryanneeki.xyz';
