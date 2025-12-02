@@ -58,7 +58,7 @@ function PostContent() {
 
     try {
       setLoading(true)
-      const response = await fetch(`https://${API_URL}/post`, {
+      const response = await fetch(`${API_URL}/post`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -89,7 +89,7 @@ function PostContent() {
 
     try {
       setSubmittingComment(true)
-      const response = await fetch(`https://${API_URL}/comment`, {
+      const response = await fetch(`${API_URL}/comment`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -110,7 +110,7 @@ function PostContent() {
   }
 
   const likePost = async (postId: string, userId: string) => {
-    return fetch(`https://${API_URL}/posts/like`, {
+    return fetch(`${API_URL}/posts/like`, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -120,7 +120,7 @@ function PostContent() {
   }
 
   const dislikePost = async (postId: string, userId: string, likeId: string) => {
-    return fetch(`https://${API_URL}/posts/dislike`, {
+    return fetch(`${API_URL}/posts/dislike`, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",

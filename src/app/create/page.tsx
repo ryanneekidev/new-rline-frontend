@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useAuth } from "@/contexts/auth-context"
 import { makeAuthenticatedRequest } from '@/lib/authFetch'
+import { API_URL } from '@/lib/api-config';
 
 export default function CreatePage() {
   const [title, setTitle] = useState("")
@@ -41,7 +42,7 @@ export default function CreatePage() {
 
     try {
       const response = await makeAuthenticatedRequest(
-        `https://${process.env.API_URL}/posts`,
+        `${API_URL}/posts`,
         {
           method: "POST",
           headers: {

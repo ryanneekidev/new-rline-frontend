@@ -23,7 +23,7 @@ export const makeAuthenticatedRequest = async (
 
   // If we get 401, try to refresh and retry once
   if (response.status === 403 || response.status === 401) {
-    const refreshResponse = await fetch(`https://${API_URL}/refresh`, {
+    const refreshResponse = await fetch(`${API_URL}/refresh`, {
       method: "POST",
       credentials: "include",
     })
