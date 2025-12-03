@@ -50,7 +50,6 @@ export function PostsFeed({ showHeader = true }: { showHeader?: boolean }) {
 
     try {
       const response = await likePost(postId, auth.user!.id)
-      console.log("Like response:", response)
       // use real response to update auth if it contains canonical likes
       if (response?.like) {
         auth.setUser(prev => prev ? {

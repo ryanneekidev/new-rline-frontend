@@ -2,6 +2,7 @@
 
 import React from "react"
 import { Heart, MessageCircle } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 type PostCardProps = {
   id: string
@@ -29,6 +30,8 @@ export function PostCard({
 }: PostCardProps) {
   const initial = author?.[0]?.toUpperCase() ?? "U"
 
+  const router = useRouter()
+
   return (
     <article
       className="group rounded-2xl border border-border/70 bg-gradient-to-b from-white/98 via-white to-white/95 px-5 py-4 shadow-sm ring-1 ring-black/5 transition-all duration-200 hover:shadow-lg"
@@ -48,7 +51,14 @@ export function PostCard({
 
         <div className="flex flex-1 flex-col">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-semibold text-foreground">{author}</span>
+            <span className="text-sm font-semibold text-foreground">
+              <button
+                onClick={() => router.push(`/profile/${author}`)}
+                className="font-semibold hover:underline"
+              >
+                {author}
+              </button>
+            </span>
             <span className="text-xs text-foreground/50">{timeAgo}</span>
           </div>
           <span className="text-[0.75rem] text-foreground/45">Public post</span>

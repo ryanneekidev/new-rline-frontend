@@ -10,9 +10,10 @@ interface FollowButtonProps {
     userId: string
     initialIsFollowing?: boolean
     isCheckingStatus?: boolean
+    onFollowChange?: (change: number) => void
 }
 
-export function FollowButton({ userId, initialIsFollowing = false, isCheckingStatus = false }: FollowButtonProps) {
+export function FollowButton({ userId, initialIsFollowing = false, isCheckingStatus = false, onFollowChange }: FollowButtonProps) {
     const [isFollowing, setIsFollowing] = useState(initialIsFollowing)
     const [loading, setLoading] = useState(false)
     const auth = useAuth()
@@ -33,8 +34,10 @@ export function FollowButton({ userId, initialIsFollowing = false, isCheckingSta
 
         try {
             await followUser(userId, auth)
+            onFollowChange?.(1)
         } catch (error) {
             setIsFollowing(false)
+            onFollowChange?.(-1)
             console.error("Error following user:", error)
         } finally {
             setLoading(false)
@@ -47,8 +50,10 @@ export function FollowButton({ userId, initialIsFollowing = false, isCheckingSta
 
         try {
             await unfollowUser(userId, auth)
+            onFollowChange?.(-1)
         } catch (error) {
             setIsFollowing(true)
+            onFollowChange?.(1)
             console.error("Error unfollowing user:", error)
         } finally {
             setLoading(false)

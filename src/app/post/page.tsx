@@ -291,15 +291,6 @@ function PostContent() {
             </Button>
           </div>
 
-          {auth.user?.id !== post.author?.id && post.author?.id && (
-            <FollowButton
-              key={`${post.author.id}-${followStatus}`}
-              userId={post.author.id}
-              initialIsFollowing={followStatus}
-              isCheckingStatus={checkingFollowStatus}
-            />
-          )}
-
           <section className="mb-8">
             <PostCard
               id={post.id}
