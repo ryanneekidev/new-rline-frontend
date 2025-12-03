@@ -5,12 +5,14 @@ import { useAuth } from "@/contexts/auth-context"
 import { Navigation } from "@/components/ui/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Heart, FileText } from "lucide-react"
-import { getPosts } from "@/lib/api"
+import { Heart, FileText, UsersRound, UserRoundPlus } from "lucide-react"
+import { getPosts, getFollowCounts } from "@/lib/api"
 
 export default function ProfilePage() {
   const { user, logout } = useAuth()
   const [postsCount, setPostsCount] = useState(0)
+  const [followersCount, setFollowersCount] = useState(0)
+  const [followingCount, setFollowingCount] = useState(0)
 
   useEffect(() => {
     if (user?.username) {
@@ -18,6 +20,12 @@ export default function ProfilePage() {
         const userPosts = posts.filter((post) => post.author?.username === user.username)
         setPostsCount(userPosts.length)
       })
+
+      getFollowCounts(user.id).then(
+        (data) => {
+          setFollowersCount(data.followersCount)
+          setFollowingCount(data.followingCount)
+        })
     }
   }, [user?.username])
 
@@ -80,7 +88,7 @@ export default function ProfilePage() {
                       <Heart className="h-5 w-5 text-pink-600" />
                     </div>
                     <div>
-                      <p className="text-base font-semibold text-foreground">{user.like?.length || 0}</p>
+                      <p className="text-base font-semibold text-foreground">{user.like?.length || "Loading"}</p>
                       <p className="text-xs text-foreground/50">Posts liked</p>
                     </div>
                   </div>
@@ -90,8 +98,28 @@ export default function ProfilePage() {
                       <FileText className="h-5 w-5 text-blue-600" />
                     </div>
                     <div>
-                      <p className="text-base font-semibold text-foreground">{postsCount}</p>
+                      <p className="text-base font-semibold text-foreground">{postsCount == 0 ? postsCount : postsCount || "Loading..."}</p>
                       <p className="text-xs text-foreground/50">Your posts</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-500/10">
+                      <UserRoundPlus className="h-5 w-5 text-teal-600" />
+                    </div>
+                    <div>
+                      <p className="text-base font-semibold text-foreground">{followersCount}</p>
+                      <p className="text-xs text-foreground/50">Followers</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-500/10">
+                      <UsersRound className="h-5 w-5 text-yellow-600" />
+                    </div>
+                    <div>
+                      <p className="text-base font-semibold text-foreground">{followingCount}</p>
+                      <p className="text-xs text-foreground/50">Following</p>
                     </div>
                   </div>
                 </div>

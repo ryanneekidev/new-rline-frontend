@@ -13,6 +13,8 @@ import { useAuth } from "@/contexts/auth-context"
 import Navigation from "@/components/ui/navigation"
 import { PostCard } from "@/components/ui/post-card"
 import { API_URL } from '@/lib/api-config';
+import { FollowButton } from "@/components/ui/follow-button"
+import { isFollowing } from "@/lib/api"
 
 interface Comment {
   id: string
@@ -31,6 +33,7 @@ interface Post {
   createdAt: string
   author: {
     username: string
+    id?: string
   }
   comments: Comment[]
 }
@@ -44,6 +47,8 @@ function PostContent() {
   const [commentContent, setCommentContent] = useState("")
   const [submittingComment, setSubmittingComment] = useState(false)
   const [likingPost, setLikingPost] = useState(false)
+  const [followStatus, setFollowStatus] = useState(false)
+  const [checkingFollowStatus, setCheckingFollowStatus] = useState(false)
 
   const postId = searchParams.get("postId")
 
@@ -52,6 +57,27 @@ function PostContent() {
       fetchPost()
     }
   }, [postId])
+
+  useEffect(() => {
+    const checkFollowStatus = async () => {
+      if (auth.token && post?.author?.id && auth.user?.id !== post.author.id) {
+        setCheckingFollowStatus(true)
+        try {
+          const status = await isFollowing(post.author.id, auth)
+          setFollowStatus(status.isFollowing)
+        } catch (error) {
+          console.error("Error checking follow status:", error)
+        } finally {
+          setCheckingFollowStatus(false)
+        }
+      } else {
+        console.log("Skipping follow check")
+        setFollowStatus(false)
+      }
+    }
+
+    checkFollowStatus()
+  }, [auth.token, post?.author?.id, auth.user?.id])
 
   const fetchPost = async () => {
     if (!postId) return
@@ -264,6 +290,15 @@ function PostContent() {
               Back to feed
             </Button>
           </div>
+
+          {auth.user?.id !== post.author?.id && post.author?.id && (
+            <FollowButton
+              key={`${post.author.id}-${followStatus}`}
+              userId={post.author.id}
+              initialIsFollowing={followStatus}
+              isCheckingStatus={checkingFollowStatus}
+            />
+          )}
 
           <section className="mb-8">
             <PostCard

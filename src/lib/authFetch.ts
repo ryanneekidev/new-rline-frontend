@@ -32,13 +32,13 @@ export const makeAuthenticatedRequest = async (
       const refreshData = await refreshResponse.json()
       const newToken = refreshData.token
       const decodedUser = jwtDecode<User>(newToken)
-      
+
       // Update context state using setters
       auth.setUser(decodedUser)
-      
+
       // Update localStorage
       localStorage.setItem("rline_token", newToken)
-      
+
       // Retry original request with new token
       response = await fetch(url, {
         ...options,

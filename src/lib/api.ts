@@ -1,4 +1,6 @@
 import { API_URL } from '@/lib/api-config';
+import { makeAuthenticatedRequest } from './authFetch';
+import type { AuthContextType } from "@/contexts/auth-context"
 
 export interface Post {
   id: string
@@ -89,5 +91,49 @@ export const dislikePost = async (postId: string, userId: string, likeId: string
     body: `userId=${userId}&postId=${postId}&likeId=${likeId}`,
     credentials: "include",
   })
+  return await response.json()
+}
+
+export const followUser = async (followingId: string, auth: AuthContextType): Promise<any> => {
+  const response = await makeAuthenticatedRequest(
+    `${API_URL}/users/follow`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: `followingId=${followingId}`,
+    },
+    auth
+  )
+  return await response.json()
+}
+
+export const unfollowUser = async (followingId: string, auth: AuthContextType): Promise<any> => {
+  const response = await makeAuthenticatedRequest(
+    `${API_URL}/users/unfollow`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: `followingId=${followingId}`,
+    },
+    auth
+  )
+  return await response.json()
+}
+
+export const getFollowCounts = async (userId: string): Promise<any> => {
+  const response = await fetch(`${API_URL}/users/${userId}/follow-counts`)
+  return await response.json()
+}
+
+export const isFollowing = async (userId: string, auth: AuthContextType): Promise<any> => {
+  const response = await makeAuthenticatedRequest(
+    `${API_URL}/users/${userId}/is-following`,
+    { method: "GET" },
+    auth
+  )
   return await response.json()
 }
