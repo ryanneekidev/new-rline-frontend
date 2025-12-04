@@ -137,3 +137,9 @@ export const isFollowing = async (userId: string, auth: AuthContextType): Promis
   )
   return await response.json()
 }
+
+export const getUserPostCount = async (userId: string): Promise<number> => {
+  const response = await fetch(`${API_URL}/users/${userId}/posts/count`)
+  const data = await response.json()
+  return data.count
+}

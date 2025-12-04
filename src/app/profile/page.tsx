@@ -6,7 +6,7 @@ import { Navigation } from "@/components/ui/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Heart, FileText, UsersRound, UserRoundPlus } from "lucide-react"
-import { getPosts, getFollowCounts } from "@/lib/api"
+import { getPosts, getFollowCounts, getUserPostCount } from "@/lib/api"
 
 export default function ProfilePage() {
   const { user, logout } = useAuth()
@@ -16,9 +16,8 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (user?.username) {
-      getPosts().then((posts) => {
-        const userPosts = posts.filter((post) => post.author?.username === user.username)
-        setPostsCount(userPosts.length)
+      getUserPostCount(user.id).then((count) => {
+        setPostsCount(count)
       })
 
       getFollowCounts(user.id).then(

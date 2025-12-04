@@ -7,7 +7,7 @@ import { Navigation } from "@/components/ui/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Heart, FileText, UsersRound, UserRoundPlus } from "lucide-react"
-import { getPosts, getFollowCounts, isFollowing } from "@/lib/api"
+import { getPosts, getFollowCounts, isFollowing, getUserPostCount } from "@/lib/api"
 import { FollowButton } from "@/components/ui/follow-button"
 import { API_URL } from "@/lib/api-config"
 
@@ -39,9 +39,8 @@ export default function ProfilePage() {
 
                 if (data.user) {
                     // Fetch posts count
-                    const posts = await getPosts()
-                    const userPosts = posts.filter((post) => post.author?.username === username)
-                    setPostsCount(userPosts.length)
+                    const userPostCount = await getUserPostCount(data.user.id)
+                    setPostsCount(userPostCount)
 
                     // Fetch follow counts
                     const counts = await getFollowCounts(data.user.id)
