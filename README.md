@@ -13,7 +13,7 @@
 
 RLine is a full-stack social media application featuring real-time interactions, optimistic UI updates, and production-ready authentication patterns. This repository contains the frontend client built with Next.js App Router and TypeScript.
 
-### Why This Project Stands Out
+### Notable Features
 
 - **Automatic Token Refresh**: Seamless authentication experience with zero user disruption
 - **Optimistic Updates**: Instant UI feedback despite 500ms+ API latency
